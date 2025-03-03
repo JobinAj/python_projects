@@ -3,11 +3,12 @@ version: '3.8'
 services:
   python-app:
     container_name: python-app-container
-    image: jobinaj/python-app:test  # Replace with your Docker Hub username
+    image: jobinaj/python-app:test
     restart: always
     ports:
-      - "5000:5000"  # Adjust if your app runs on a different port
+      - "5000:5000"
     environment:
       - ENV=production
+    working_dir: /app
     volumes:
-      - .:/app  # Mount current directory to container
+      - ./7_final_code_background_music_image.py:/app/7_final_code_background_music_image.py
