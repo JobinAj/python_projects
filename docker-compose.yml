@@ -1,12 +1,7 @@
-version: '3.8'
-
+version: '3'
 services:
-  snake-game:
-    build: ./1_snake_game
-    container_name: snake_game_container
-    volumes:
-      - ./1_snake_game:/app
-    environment:
-      - DISPLAY=:0
-    stdin_open: true
-    tty: true
+  python-game:
+    image: jobinaj/python-snake-game:test
+    restart: always
+    ports:
+      - "5000:5000"
