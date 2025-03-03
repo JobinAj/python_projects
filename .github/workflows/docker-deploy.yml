@@ -38,6 +38,16 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
           chmod 600 private_key
 
+      - name: Install Docker & Docker Compose on Remote Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo apt update
+            sudo apt install -y docker.io docker-compose
+            sudo systemctl enable --now docker
+            sudo usermod -aG docker $USER
+            newgrp docker
+          EOF
+
       - name: Deploy using Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.SERVER_IP }} << 'EOF'
