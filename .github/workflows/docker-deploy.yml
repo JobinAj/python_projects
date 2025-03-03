@@ -44,14 +44,14 @@ jobs:
             sudo apt update
             sudo apt install -y docker.io docker-compose
             sudo systemctl enable --now docker
-            sudo usermod -aG docker $USER
-            newgrp docker
           EOF
 
       - name: Deploy using Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.SERVER_IP }} << 'EOF'
+            cd /home/ubuntu/python_projects  # Navigate to the correct directory
             docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
             docker pull ${{ secrets.DOCKER_USERNAME }}/python-snake-game:test
-            docker-compose up -d --force-recreate
+            docker-compose down  # Stop any running containers
+            docker-compose up -d --force-recreate  # Start fresh
           EOF
