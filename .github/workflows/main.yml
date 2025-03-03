@@ -22,8 +22,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{secrets.DOCKER_HUB_USERNAME }}
-          password: ${{secrets.DOCKER_HUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # Step 4: Build and push the Docker image
       - name: Build and Push Docker Image
@@ -32,9 +32,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{secrets.DOCKER_HUB_USERNAME }}/python-app:test
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/python-app:test
 
-      # Step 5: Deploy using Docker Compose
+      # Step 5: Install Docker Compose (Fix for "docker-compose: command not found")
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      # Step 6: Deploy using Docker Compose
       - name: Deploy with Docker Compose
         run: |
           docker-compose down
