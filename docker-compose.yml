@@ -1,7 +1,7 @@
 version: '3'
 services:
   python-game:
-    image: jobinaj/python-snake-game:test
+    image: jobinaj/python-app
     restart: always
     ports:
       - "5000:5000"
