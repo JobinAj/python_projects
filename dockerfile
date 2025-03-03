@@ -1,14 +1,17 @@
-# Use official Python image
-FROM python:3.10
+# Use an official Python image
+FROM python:3.9-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy all files, including the resources folder
+# Copy all project files into the container
 COPY . .
 
-# Install dependencies
-RUN pip install pygame
+# Install required dependencies
+RUN pip install -r requirements.txt
 
-# Run the final game script
+# Expose a display port if using GUI
+ENV DISPLAY=:0
+
+# Run the game
 CMD ["python", "7_final_code_background_music_image.py"]
