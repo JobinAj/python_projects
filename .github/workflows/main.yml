@@ -42,6 +42,5 @@ jobs:
 
       # Step 6: Deploy using Docker Compose
       - name: Deploy with Docker Compose
-        run: |
-          docker-compose down
+        run: 
           docker-compose up -d
