@@ -1,0 +1,41 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - main  # Runs on push to main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Docker Buildx (for multi-platform builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{DOCKER_HUB_USERNAME }}
+          password: ${{DOCKER_HUB_PASSWORD }}
+
+      # Step 4: Build and push the Docker image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{DOCKER_HUB_USERNAME }}/python-app:test
+
+      # Step 5: Deploy using Docker Compose
+      - name: Deploy with Docker Compose
+        run: |
+          docker-compose down
+          docker-compose up -d
