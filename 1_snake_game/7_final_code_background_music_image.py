@@ -1,13 +1,14 @@
-# Add background image and music (Sound Disabled)
-
 import pygame
 from pygame.locals import *
 import time
 import random
+from flask import Flask, render_template
+
+app = Flask(__name__)
 
 SIZE = 40
 BACKGROUND_COLOR = (110, 110, 5)
-ENABLE_SOUND = False  # Set to True if you want sound
+ENABLE_SOUND = False
 
 class Apple:
     def __init__(self, parent_screen):
@@ -29,7 +30,6 @@ class Snake:
         self.parent_screen = parent_screen
         self.image = pygame.image.load("resources/block.jpg").convert()
         self.direction = 'down'
-
         self.length = 1
         self.x = [40]
         self.y = [40]
@@ -76,8 +76,7 @@ class Snake:
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Codebasics Snake And Apple Game")
-
+        pygame.display.set_caption("Snake Game")
         if ENABLE_SOUND:
             pygame.mixer.init()
             self.play_background_music()
@@ -88,100 +87,40 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple.draw()
 
-    def play_background_music(self):
-        if ENABLE_SOUND:
-            pygame.mixer.music.load('resources/bg_music_1.mp3')
-            pygame.mixer.music.play(-1, 0)
-
-    def play_sound(self, sound_name):
-        if ENABLE_SOUND:
-            if sound_name == "crash":
-                sound = pygame.mixer.Sound("resources/crash.mp3")
-            elif sound_name == 'ding':
-                sound = pygame.mixer.Sound("resources/ding.mp3")
-            pygame.mixer.Sound.play(sound)
-
-    def reset(self):
-        self.snake = Snake(self.surface)
-        self.apple = Apple(self.surface)
-
-    def is_collision(self, x1, y1, x2, y2):
-        return x1 >= x2 and x1 < x2 + SIZE and y1 >= y2 and y1 < y2 + SIZE
-
-    def render_background(self):
-        bg = pygame.image.load("resources/background.jpg")
-        self.surface.blit(bg, (0, 0))
-
     def play(self):
-        self.render_background()
         self.snake.walk()
         self.apple.draw()
-        self.display_score()
-        pygame.display.flip()
-
-        if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
-            self.play_sound("ding")
-            self.snake.increase_length()
-            self.apple.move()
-
-        for i in range(3, self.snake.length):
-            if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
-                self.play_sound('crash')
-                raise "Collision Occurred"
-
-    def display_score(self):
-        font = pygame.font.SysFont('arial', 30)
-        score = font.render(f"Score: {self.snake.length}", True, (200, 200, 200))
-        self.surface.blit(score, (850, 10))
-
-    def show_game_over(self):
-        self.render_background()
-        font = pygame.font.SysFont('arial', 30)
-        line1 = font.render(f"Game is over! Your score is {self.snake.length}", True, (255, 255, 255))
-        self.surface.blit(line1, (200, 300))
-        line2 = font.render("To play again press Enter. To exit press Escape!", True, (255, 255, 255))
-        self.surface.blit(line2, (200, 350))
-        if ENABLE_SOUND:
-            pygame.mixer.music.pause()
         pygame.display.flip()
 
     def run(self):
         running = True
-        pause = False
-
         while running:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         running = False
-                    if event.key == K_RETURN:
-                        if ENABLE_SOUND:
-                            pygame.mixer.music.unpause()
-                        pause = False
-
-                    if not pause:
-                        if event.key == K_LEFT:
-                            self.snake.move_left()
-                        if event.key == K_RIGHT:
-                            self.snake.move_right()
-                        if event.key == K_UP:
-                            self.snake.move_up()
-                        if event.key == K_DOWN:
-                            self.snake.move_down()
-
+                    if event.key == K_LEFT:
+                        self.snake.move_left()
+                    if event.key == K_RIGHT:
+                        self.snake.move_right()
+                    if event.key == K_UP:
+                        self.snake.move_up()
+                    if event.key == K_DOWN:
+                        self.snake.move_down()
                 elif event.type == QUIT:
                     running = False
-
-            try:
-                if not pause:
-                    self.play()
-            except Exception:
-                self.show_game_over()
-                pause = True
-                self.reset()
-
+            self.play()
             time.sleep(.25)
 
+game = None
+
+@app.route('/')
+def index():
+    global game
+    if game is None:
+        game = Game()
+        game.run()
+    return "Snake Game is Running!"
+
 if __name__ == '__main__':
-    game = Game()
-    game.run()
+    app.run(host='0.0.0.0', port=5000)
