@@ -14,8 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy only necessary files
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+run pip install py
 
 # Set the correct working directory
 WORKDIR /app/1_snake_game
