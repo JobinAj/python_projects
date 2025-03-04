@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
     libsdl2-mixer-2.0-0 \
     alsa-utils \
     pulseaudio \
-    xvfb  # Add virtual display support
-    && rm -rf /var/lib/apt/lists/*
+    xvfb && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy only necessary files
 COPY requirements.txt .
