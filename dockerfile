@@ -24,10 +24,10 @@ WORKDIR /app/1_snake_game
 # Copy the `1_snake_game` folder properly
 COPY 1_snake_game /app/1_snake_game
 
-# Set environment variables to fix XDG_RUNTIME_DIR issues
+# Set environment variables
 ENV SDL_AUDIODRIVER=pulseaudio
 ENV XDG_RUNTIME_DIR=/tmp
-ENV DISPLAY=:99  # Use xvfb virtual display
+ENV DISPLAY=:99
 
 # Start the virtual display and run the game
 CMD ["bash", "-c", "Xvfb :99 -screen 0 1024x768x16 & python 7_final_code_background_music_image.py"]
