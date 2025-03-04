@@ -1,6 +1,15 @@
+# Use a slim Python image
 FROM python:3.9-slim
 
+# Set working directory
 WORKDIR /app
+
+# Install necessary system libraries (including libgthread)
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    libsdl2-mixer-2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy only necessary files
 COPY requirements.txt .
